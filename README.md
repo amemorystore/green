@@ -1,2 +1,2 @@
 # green
- disassembly of the translation of green
+ disassembly of the green translation
