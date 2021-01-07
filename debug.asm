@@ -245,13 +245,13 @@ ld bc,Menu6Properties
 ld bc,Menu7Properties
 
 Menu1Properties:
-ld bc,MenuCursorUp   ; [UP]
-ld bc,MenuCursorDown ; [DOWN]
-ld bc,SwitchMenuBack ; [LEFT]
-ld bc,SwitchMenuBack ; [RIGHT]
+ld bc,MenuCursorUp       ; [UP]
+ld bc,MenuCursorDown    ; [DOWN]
+ld bc,SwitchMenuBack     ; [LEFT]
+ld bc,SwitchMenuBack    ; [RIGHT]
 ld bc,ReturnControlCall  ; [B]
-ld bc,Menu1Perform   ; [A]
-ld bc,Menu1Constructor ; .ctor
+ld bc,Menu1Perform      ; [A]
+ld bc,Menu1Constructor   ; .ctor
 ld bc,Menu1Desc1 ; desc1
 ld bc,Menu1Desc2 ; desc1
 ld bc,Menu1Desc3 ; desc1
@@ -309,6 +309,7 @@ ReadHexExpr:
 ld a,(hl)
 ld c,$00
 ld de,HexCycleTbl
+
 ReadHexExpr_L1:
 ld a,(de)
 cp (hl)
@@ -360,14 +361,15 @@ call WriteHexExpr
 ret
 
 Menu2Properties:
-ld bc,Menu2CycUp   ; [UP]
+ld bc,Menu2CycUp    ; [UP]
 ld bc,Menu2CycDown ; [DOWN]
-ld bc,Menu2CurLeft ; [LEFT]
-ld bc,Menu2CurRight ; [RIGHT]
-ld bc,BackToMain ; [B]
+ld bc,Menu2CurLeft  ; [LEFT]
+ld bc,Menu2CurRight; [RIGHT]
+ld bc,BackToMain    ; [B]
 ld bc,Menu2Perform   ; [A]
 ld bc,Menu2Constructor ; .ctor
 ld bc,Menu2Desc1 ; desc1
+
 Menu2Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; cursor position at 0
@@ -852,11 +854,11 @@ cp e
 jr nz,Menu5Perform_L1
 call ConfirmSound
 jp BackToMain
-
+;....................................
 Menu6Properties:
-ld bc,Menu6CursorUp   ; [UP]
+ld bc,Menu6CursorUp  ; [UP]
 ld bc,Menu6CursorDown ; [DOWN]
-ld bc,Menu6ParamL ; [LEFT]
+ld bc,Menu6ParamL   ; [LEFT]
 ld bc,Menu6ParamR ; [RIGHT]
 ld bc,BackToMain ; [B]
 ld bc,Menu6Perform   ; [A]
@@ -868,6 +870,7 @@ ld bc,Menu6Desc1 ; desc4
 ld bc,Menu6Desc1 ; desc5
 ld bc,Menu6Desc1 ; desc6
 ld bc,Menu6Desc1 ; desc7
+;....................................
 Menu6Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; cursor position at 0
@@ -877,54 +880,65 @@ ld hl,Menu6Text
 ld de,$c3f4
 call PutASCIIMultiline
 jp Menu6Redraw
+;....................................
 Menu6Desc1:
-db $0d,"L/R: Mod.param",$0a
-db "A Button: Accept",$0a
-db "B Button: Cancel",$0a
-db "Parameter:",$00
+db $0d,"l/r: mod.param",$0a
+db "a button: aCcept",$0a
+db "b button: canCel",$0a
+db "parameter:",$00
+;....................................
 Menu6Text:
-db "Give ()",$0a
-db "Give item",$0a
-db "Clear () box",$0a
-db "All fly locs.",$0a
-db "Predef [7 heal]",$0a
-db "Max money",$0a
-db "Display area TX",$00
+db "give ()",$0a
+db "give item",$0a
+db "clear () box",$0a
+db "all fly locs.",$0a
+db "predef [7 heal]",$0a
+db "max money",$0a
+db "display area tX",$00
+;....................................
 Menu6Redraw:
 db $fa,$1c,$c2 ; ld a,(c21c)
 ld hl,$c4ec
 call WriteDblHexExpr
 ret
+;....................................
 Menu6ParamL:
 ld hl,$c21c
 ld a,(hl)
 add a,$10
 ld (hl),a
 jr Menu6Redraw
+;....................................
 Menu6ParamR:
 ld hl,$c21c
 inc (hl)
 jr Menu6Redraw
+;....................................
 Menu6CursorUp:
 ld bc,Menu6Redraw
 push bc
 jp MenuCursorUp
+;....................................
 Menu6CursorDown:
 ld bc,Menu6Redraw
 push bc
 jp MenuCursorDown
+;....................................
 Menu6Cursor0:
 ld c,$05
 call $3e59
 jr Menu6Finish
+;....................................
 Menu6Cursor1:
 ld c,$01
 call $3e3f
 jr Menu6Finish
+;....................................
 Menu6Cursor2:
 xor a
 db $ea,$7f,$da ; da7f=0
 jr Menu6Finish
+;....................................
 Menu6Perform:
 db $fa,$1c,$c2 ; load param
 ld b,a
@@ -942,9 +956,11 @@ jr z,Menu6Cursor4
 cp $05
 jr z,Menu6Cursor5
 jr Menu6Cursor6
+;....................................
 Menu6Finish:
 call ConfirmSound
 jp BackToMain
+;....................................
 Menu6Cursor3:
 xor a
 dec a
@@ -952,10 +968,12 @@ ld hl,$d70a
 db $22 ; LDI (HL),A
 ld (hl),a
 jr Menu6Finish
+;....................................
 Menu6Cursor4:
 ld a,b
 call $3eb4
 jr Menu6Finish
+;....................................
 Menu6Cursor5:
 ld hl,$d346
 ld a,$99
@@ -963,22 +981,24 @@ db $22 ; LDI (HL),A
 db $22 ; LDI (HL),A
 db $22 ; LDI (HL),A
 jr Menu6Finish
+;....................................
 Menu6Cursor6:
 ld a,b
 db $e0,$8c
 call $2817
 pop bc
 jp ReturnControlCall
-
+;....................................
 Menu7Properties:
-ld bc,SwitchMenuBack   ; [UP]
-ld bc,SwitchMenuBack ; [DOWN]
-ld bc,Menu7TurnL ; [LEFT]
+ld bc,SwitchMenuBack     ; [UP]
+ld bc,SwitchMenuBack  ; [DOWN]
+ld bc,Menu7TurnL     ; [LEFT]
 ld bc,Menu7TurnR ; [RIGHT]
-ld bc,BackToMain ; [B]
+ld bc,BackToMain    ; [B]
 ld bc,SwitchMenuBack   ; [A]
-ld bc,Menu7Constructor ; .ctor
+ld bc,Menu7Constructor   ; .ctor
 ld bc,Menu7Desc1 ; desc1
+;....................................
 Menu7Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; page at 0
@@ -987,48 +1007,53 @@ ld hl,Menu7Text1
 ld de,$c3f3
 call PutASCIIMultiline
 ret
+;....................................
 Menu7Desc1:
-db "Left/Right - page",$0a,$0a
-db "B Button: Cancel",$00
+db "left/right - page",$0a,$0a
+db "b button: canCel",$00
+;....................................
 Menu7Texts:
 ld bc,Menu7Text1
 ld bc,Menu7Text2
 ld bc,Menu7Text3
 ld bc,Menu7Text4
-;   ----------------
+;....................................
 Menu7Text1:
-db "C000: Sound I/O ",$0a
-db "C100: SpriteData",$0a
-db "CC28: Menu keys ",$0a
-db "CFC6: Battle nfo",$0a
-db "CF7A: Mart items",$0a
-db "D058: Encounter ",$0a
-db "D162: Party ()  ",$00
+db "C000: sound i/o ",$0a
+db "C100: spritedata",$0a
+db "CC28: menu keys ",$0a
+db "CFC6: battleinfo",$0a
+db "CF7A: mart items",$0a
+db "D058: encounter ",$0a
+db "D162: party ()  ",$00
+;....................................
 Menu7Text2:
-db "D31C: Item count",$0a
-db "D356: Cur badges",$0a
+db "D31C: item count",$0a
+db "D356: cur badges",$0a
 db "D361: X/Y coords",$0a
-db "D36E: Map script",$0a
-db "D53A: Items box ",$0a
-db "D888: Wild data ",$0a
+db "D36E: map script",$0a
+db "D53A: items box ",$0a
+db "D888: wild data ",$0a
 db "DA80: () in box ",$00
+;....................................
 Menu7Text3:
 db "1st () settings:",$0a
-db "D18B: Level     ",$0a
-db "D172: Moveset   ",$0a
+db "D18B: level     ",$0a
+db "D172: moveset   ",$0a
 db "D188: PP        ",$0a
-db "D18F: Stats     ",$0a
+db "D18F: stats     ",$0a
 db "----------------",$0a
-db "D5AB: Evt flags ",$00
+db "D5AB: evt flags ",$00
+;....................................
 Menu7Text4:
-db "C3A0: ScreenData",$0a
-db "CD80: Screen buf",$0a
-db "CF4B: Last name ",$0a
-db "D05C: Team ID   ",$0a
-db "D12B: Textbox ID",$0a
-db "D157: PlayerName",$0a
-db "D349: Rival name",$00
-
+db "C3A0: screendata",$0a
+db "CD80: screenbuff",$0a
+db "CF4B: last name ",$0a
+db "D05C: team iD   ",$0a
+db "D12B: textbox iD",$0a
+db "D157: playername",$0a
+db "D349: other name",$00
+;....................................
 Menu7TurnL:
 ld hl,$c21b
 ld a,(hl)
@@ -1036,6 +1061,7 @@ cp $00
 ret z
 dec (hl)
 jr Menu7Redraw
+;....................................
 Menu7TurnR:
 ld hl,$c21b
 ld a,(hl)
@@ -1043,6 +1069,7 @@ cp $03
 ret z
 inc (hl)
 jr Menu7Redraw
+;....................................
 Menu7Redraw:
 ld a,(hl)
 ld hl,Menu7Texts
@@ -1061,7 +1088,7 @@ ld h,a
 ld l,e
 ld de,$c3f3
 jp PutASCIIMultiline
-
+;....................................
 MenuCursorUp:
 ld hl,$c21b
 ld a,(hl)
@@ -1070,6 +1097,7 @@ ret z
 dec (hl)
 call MenuCursorRedraw
 ret
+;....................................
 MenuCursorDown:
 ld hl,$c21b
 db $fa,$1a,$c2
@@ -1082,6 +1110,7 @@ ret z
 inc (hl)
 call MenuCursorRedraw
 ret
+;....................................
 MenuCursorRedraw:
 call DrawBottomBox
 ld hl,$c3f3
@@ -1096,12 +1125,14 @@ pop bc
 pop hl
 db $fa,$1b,$c2
 push af
+;....................................
 MenuCursorRedraw_L1:
 cp $00
 jr z,MenuCursorRedraw_L2
 add hl,bc
 dec a
 jr nz,MenuCursorRedraw_L1
+;....................................
 MenuCursorRedraw_L2:
 ld (hl),$ed
 db $fa,$1a,$c2
@@ -1134,5 +1165,7 @@ ld l,e
 ld de,$c4b9
 call PutASCIIMultiline
 ret
+;....................................
 MenuCursorRedrawStr:
 db $20,$0a,$20,$0a,$20,$0a,$20,$0a,$20,$0a,$20,$0a,$20,$00
+;....................................
