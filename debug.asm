@@ -1,14 +1,14 @@
 ;  ......_ ......
 ; org [b]71b0 // 29104
 ; y el lowg reen
-
+; random = 'GenRandom'
+;....................................
 ld hl,$005e
 call $3c36
 xor a
 call SwitchMenu
-
-;fff5
-Forever:
+;....................................
+Forever: ; fff5
 db $fa,$1a,$c2
 ld c,a
 add a,a
@@ -25,36 +25,35 @@ inc de
 ld h,d
 ld l,e
 ld bc,Forever
-
 push bc
 ld bc,$0003
-db $f0,$f5 ;ld a,(fff5)
+db $f0,$f5 ; ld a,(fff5)
 and $40
 jp nz,DerefPointer
 add hl,bc
-db $f0,$f5 ;ld a,(fff5)
+db $f0,$f5 ; ld a,(fff5)
 and $80
 jp nz,DerefPointer
 add hl,bc
-db $f0,$f5 ;ld a,(fff5)
+db $f0,$f5 ; ld a,(fff5)
 and $20
 jp nz,DerefPointer
 add hl,bc
-db $f0,$f5 ;ld a,(fff5)
+db $f0,$f5 ; ld a,(fff5)
 and $10
 jp nz,DerefPointer
 add hl,bc
-db $f0,$f5 ;ld a,(fff5)
+db $f0,$f5 ; ld a,(fff5)
 and $02
 jp nz,DerefPointer
 add hl,bc
-db $f0,$f5 ;ld a,(fff5)
+db $f0,$f5 ; ld a,(fff5)
 and $01
 jp nz,DerefPointer
 pop bc
 halt
 jp Forever
-
+;....................................
 DerefPointer:
 push af
 ld e,(hl)
@@ -65,37 +64,41 @@ ld l,e
 ld bc,DerefRets
 push bc
 jp (hl)
+;....................................
 DerefRets:
 pop af
 ld b,a
+;....................................
 DerefRets_L1:
 db $f0,$f5
 and b
 cp $00
 jp nz,DerefRets_L1
 ret
-
+;....................................
 ReturnControlCall:
 pop bc
 pop bc
 pop bc
+;....................................
 ReturnControl:
 ld a,$b6
 call $2238
 call $373e
 ld a,$03
 jp $3ffa
+;....................................
 BackToMain:
 xor a
 call SwitchMenu
 ret
-
+;....................................
 ConfirmSound:
 ld a,$b2
 call $2238
 call $373e
 ret
-
+;....................................
 DrawTextbox:
 ld a,$79
 ld de,$0014
@@ -109,6 +112,7 @@ dec c
 call MemSet
 inc a
 db $22 ; LDI (HL),A
+;....................................
 DrawTextbox_L1:
 ld a,$7c
 pop hl
@@ -134,13 +138,13 @@ dec c
 call MemSet
 ld (hl),$7e
 ret
-
+;....................................
 MemSet:
 db $22 ; LDI (HL),A
 dec c
 jr nz,MemSet
 ret
-
+;....................................
 PutASCIIMultiline:
 push de
 ld a,(hl)
@@ -150,6 +154,7 @@ inc hl
 pop de
 ld de,$c4a5
 push de
+;....................................
 PutASCIIMultiline_L2:
 call PutASCII
 dec hl
@@ -159,17 +164,18 @@ cp $00
 jr z,PutASCIIMultiline_R1
 pop de
 ld c,$14
+;....................................
 PutASCIIMultiline_L1:
 inc de
 dec c
 jr nz,PutASCIIMultiline_L1
 push de
 jr PutASCIIMultiline_L2
+;....................................
 PutASCIIMultiline_R1:
 pop de
 ret
-
-
+;....................................
 PutASCII:
 db $2a ; LDI A,(HL)
 cp $00
@@ -187,7 +193,7 @@ pop hl
 ld (de),a
 inc de
 jr PutASCII
-
+;....................................
 ASCLookupTable:
 db $7f,$e7,$00,$00,$00,$00,$00,$e0,$e1,$e2,$00,$00,$f4,$e3,$e8,$f3
 db $f6,$f7,$f8,$f9,$fa,$fb,$fc,$fd,$fe,$ff,$9c,$9d,$00,$00,$00,$e6
@@ -195,9 +201,10 @@ db $00,$80,$81,$82,$83,$84,$85,$86,$87,$88,$89,$8a,$8b,$8c,$8d,$8e
 db $8f,$90,$91,$92,$93,$94,$95,$96,$97,$98,$99,$9e,$f3,$9f,$00,$00
 db $00,$a0,$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$a9,$aa,$ab,$ac,$ad,$ae
 db $af,$b0,$b1,$b2,$b3,$b4,$b5,$b6,$b7,$b8,$b9
-
+;....................................
 SwitchMenu:
 push af
+;....................................
 SwitchMenu_L1:
 db $f0,$f5
 cp $00
@@ -232,9 +239,10 @@ pop hl
 ld bc,SwitchMenuBack
 push bc
 jp (hl)
+;....................................
 SwitchMenuBack:
 ret
-
+;....................................
 MenuList:
 ld bc,Menu1Properties
 ld bc,Menu2Properties
@@ -243,15 +251,15 @@ ld bc,Menu4Properties
 ld bc,Menu5Properties
 ld bc,Menu6Properties
 ld bc,Menu7Properties
-
+;....................................
 Menu1Properties:
-ld bc,MenuCursorUp       ; [UP]
-ld bc,MenuCursorDown    ; [DOWN]
-ld bc,SwitchMenuBack     ; [LEFT]
-ld bc,SwitchMenuBack    ; [RIGHT]
-ld bc,ReturnControlCall  ; [B]
-ld bc,Menu1Perform      ; [A]
-ld bc,Menu1Constructor   ; .ctor
+ld bc,MenuCursorUp    ; [UP]
+ld bc,MenuCursorDown  ; [DOWN]
+ld bc,SwitchMenuBack  ; [LEFT]
+ld bc,SwitchMenuBack  ; [RIGHT]
+ld bc,ReturnControlCall ; [B]
+ld bc,Menu1Perform        ; [A]
+ld bc,Menu1Constructor      ; .ctor
 ld bc,Menu1Desc1 ; desc1
 ld bc,Menu1Desc2 ; desc1
 ld bc,Menu1Desc3 ; desc1
@@ -259,34 +267,43 @@ ld bc,Menu1Desc4 ; desc1
 ld bc,Menu1Desc5 ; desc1
 ld bc,Menu1Desc6 ; desc1
 ld bc,Menu1Desc7 ; desc1
+;....................................
 Menu1Text:
-db "Write memory", $0a
-db "Hex viewer", $0a
-db "Anti-crasher", $0a
-db "MemCorruptor", $0a
-db "Miscellanous", $0a
-db "Address list",$0a
-db "Exit",$00
+db "write memory", $0a
+db "Hhx viewer", $0a
+db "anti-crasher", $0a
+db "memcorruptor", $0a
+db "miscellanous", $0a
+db "address list",$0a
+db "eXit",$00
+;....................................
 Menu1Desc1:
-db "Write single and",$0a,$0a
+db "write single and",$0a,$0a
 db "multi-byte values",$00
+;....................................
 Menu1Desc2:
-db "View contents of",$0a,$0a
+db "wiew contents of",$0a,$0a
 db "ROM, RAM, etc.",$00
+;....................................
 Menu1Desc3:
-db "Hook RST vectors",$0a,$0a
+db "hook RST vectors",$0a,$0a
 db "to stop crashes",$00
+;....................................
 Menu1Desc4:
-db "Corrupt blocks",$0a,$0a
+db "corrupt blocks",$0a,$0a
 db "of memory",$00
+;....................................
 Menu1Desc5:
-db "Perform common",$0a,$0a
+db "perform common",$0a,$0a
 db "tasks and hacks",$00
+;....................................
 Menu1Desc6:
-db "Most important",$0a,$0a
+db "most important",$0a,$0a
 db "addresses to know",$00
+;....................................
 Menu1Desc7:
-db "Quit this menu",$00
+db "quit this menu",$00
+;....................................
 Menu1Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; cursor position at 0
@@ -295,6 +312,7 @@ ld de,$c3f4
 call PutASCIIMultiline
 call MenuCursorRedraw
 ret
+;....................................
 Menu1Perform:
 db $fa,$1b,$c2
 cp $06
@@ -302,14 +320,15 @@ jp z,ReturnControlCall
 inc a
 call SwitchMenu
 ret
-
+;....................................
 HexCycleTbl:
 db $f6,$f7,$f8,$f9,$fa,$fb,$fc,$fd,$fe,$ff,$80,$81,$82,$83,$84,$85
+;....................................
 ReadHexExpr:
 ld a,(hl)
 ld c,$00
 ld de,HexCycleTbl
-
+;....................................
 ReadHexExpr_L1:
 ld a,(de)
 cp (hl)
@@ -320,7 +339,7 @@ jr ReadHexExpr_L1
 ReadHexExpr_L2:
 ld a,c
 ret
-
+;....................................
 ReadDblHexExpr:
 xor a
 call ReadHexExpr
@@ -332,7 +351,7 @@ ld c,a
 pop af
 add a,c
 ret
-
+;....................................
 WriteHexExpr:
 push de
 push hl
@@ -347,7 +366,7 @@ pop hl
 db $22 ; LDI (HL),A
 pop de
 ret
-
+;....................................
 WriteDblHexExpr:
 ld b,a
 push bc
@@ -359,17 +378,17 @@ ld a,b
 and $0f
 call WriteHexExpr
 ret
-
+;....................................
 Menu2Properties:
-ld bc,Menu2CycUp    ; [UP]
-ld bc,Menu2CycDown ; [DOWN]
+ld bc,Menu2CycUp  ; [UP]
+ld bc,Menu2CycDown  ; [DOWN]
 ld bc,Menu2CurLeft  ; [LEFT]
-ld bc,Menu2CurRight; [RIGHT]
+ld bc,Menu2CurRight ; [RIGHT]
 ld bc,BackToMain    ; [B]
-ld bc,Menu2Perform   ; [A]
+ld bc,Menu2Perform  ; [A]
 ld bc,Menu2Constructor ; .ctor
-ld bc,Menu2Desc1 ; desc1
-
+ld bc,Menu2Desc1        ; desc1
+;....................................
 Menu2Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; cursor position at 0
@@ -389,15 +408,19 @@ ld hl,Menu2Text2
 ld de,$c46b
 call PutASCIIMultiLine
 jp Menu2Redraw
+;....................................
 Menu2Text:
-db " -Write memory-", $00
+db " -write memory-", $00
+;....................................
 Menu2Text2:
-db "Expr. length: 1",$00
+db "expr. length: 1",$00
+;....................................
 Menu2Desc1:
-db $0d,"START and A: Len",$0a
-db "D-PAD: Modify",$0a
-db "A Button: OK",$0a
-db "B Button: Cancel",$00
+db $0d,"start and a: len",$0a
+db "d-pad: modify",$0a
+db "a button: OK",$0a
+db "b button: canCel",$00
+;....................................
 Menu2LenCyc:
 ld hl,$c21c
 ld a,(hl)
@@ -406,12 +429,14 @@ ld (hl),a
 cp $06
 jr nz,Menu2LenCyc_L1
 ld (hl),$01
+;....................................
 Menu2LenCyc_L1:
 ld a,(hl)
 ld hl,$c479
 add a,$f6
 ld (hl),a
 ret
+;....................................
 Menu2Perform:
 db $f0,$f5
 and $08
@@ -428,6 +453,7 @@ ld e,a
 db $fa,$1c,$c2 ; ld a,(c21c)
 ld c,a
 ld hl,$c434
+;....................................
 Menu2Perform_1L:
 push bc
 push de
@@ -441,6 +467,7 @@ dec c
 jr nz,Menu2Perform_1L
 call ConfirmSound
 jp BackToMain
+;....................................
 Menu2CurLeft:
 ld hl,$c21b
 ld a,(hl)
@@ -448,6 +475,7 @@ cp $00
 ret z
 dec (hl)
 jr Menu2Redraw
+;....................................
 Menu2CurRight:
 ld hl,$c21b
 ld a,(hl)
@@ -455,6 +483,7 @@ cp $0e
 ret z
 inc (hl)
 jr Menu2Redraw
+;....................................
 Menu2Redraw:
 ld hl,$c41b
 ld a,$7f
@@ -467,11 +496,13 @@ add a,l
 ld l,a
 ld (hl),$ee
 ret
+;....................................
 DrawBottomBox:
 ld hl,$c490
 ld bc,$0614
 call DrawTextbox
 ret
+;....................................
 Menu2CycUp:
 ld hl,$c42f
 db $fa,$1b,$c2
@@ -487,12 +518,15 @@ cp $86
 ret nz
 ld (hl),$f6
 ret
+;....................................
 Menu2CycUp_L1:
 ld (hl),$80
 ret
+;....................................
 MenuCycRestore:
 ld (hl),$9c
 ret
+;....................................
 Menu2CycDown:
 ld hl,$c42f
 db $fa,$1b,$c2
@@ -508,10 +542,11 @@ cp $7f
 ret nz
 ld (hl),$ff
 ret
+;....................................
 Menu2CycDown_L1:
 ld (hl),$85
 ret
-
+;....................................
 Menu3Properties:
 ld bc,Menu3Up   ; [UP]
 ld bc,Menu3Down ; [DOWN]
@@ -519,8 +554,9 @@ ld bc,Menu3Left ; [LEFT]
 ld bc,Menu3Right ; [RIGHT]
 ld bc,BackToMain ; [B]
 ld bc,Menu3AutoRefresh   ; [A]
-ld bc,Menu3Constructor ; .ctor
-ld bc,Menu3Desc1 ; desc1
+ld bc,Menu3Constructor    ; .ctor
+ld bc,Menu3Desc1           ; desc1
+;....................................
 Menu3Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; starting address hi byte
@@ -529,11 +565,13 @@ call MenuCursorRedraw
 ld hl,$c3f3
 ld (hl),$7f
 jr Menu3Redraw
+;....................................
 Menu3Desc1:
-db $0d,"UP/DOWN: Move 100"
-db $0a,"LEFT/RIGHT: Mov.10"
-db $0a,"Hold A: Autoupdate"
-db $0a,"B Button: Cancel",$00
+db $0d,"up/down: mov. 100"
+db $0a,"left/right: mov.10"
+db $0a,"hold a: autoupdate"
+db $0a,"b button: canCel",$00
+;....................................
 Menu3Redraw:
 ld hl,$c3f3
 ld c,$07
@@ -541,6 +579,7 @@ db $fa,$1b,$c2 ; ld a,(c21b)
 ld d,a
 db $fa,$1c,$c2 ; ld a,(c21c)
 ld e,a
+;....................................
 Menu3Redraw_L1:
 push bc
 push hl
@@ -575,6 +614,7 @@ pop bc
 dec c
 jr nz,Menu3Redraw_L1
 ret
+;....................................
 Menu3Up:
 ld hl,$c21b
 db $f0,$f5 ;ld a,(fff5)
@@ -586,6 +626,7 @@ ld (hl),a
 Menu3Up_L1:
 dec (hl)
 jp Menu3Redraw
+;....................................
 Menu3Down:
 ld hl,$c21b
 db $f0,$f5 ;ld a,(fff5)
@@ -594,6 +635,7 @@ jr z,Menu3Down_L1
 ld a,(hl)
 add a, $0f
 ld (hl),a
+;....................................
 Menu3Down_L1:
 inc (hl)
 jp Menu3Redraw
@@ -605,10 +647,12 @@ jr nz,Menu3HiDecRet
 dec hl
 dec (hl)
 inc hl
+;....................................
 Menu3HiDecRet:
 sub $10
 ld (hl),a
 jp Menu3Redraw
+;....................................
 Menu3Right:
 ld hl,$c21c
 ld a,(hl)
@@ -617,18 +661,20 @@ jr nz,Menu3HiIncRet
 dec hl
 inc (hl)
 inc hl
+;....................................
 Menu3HiIncRet:
 add a,$10
 ld (hl),a
 jp Menu3Redraw
+;....................................
 Menu3AutoRefresh:
 pop hl
 pop de
-ld de,$0000 ;this will disable debounce checking, since
-push de ;every x and 0 equals 0
+ld de,$0000 ; disables debounce checks
+push de ; since every x and 0 equals 0
 pop hl
 jp Menu3Redraw
-
+;....................................
 Menu4Properties:
 ld bc,MenuCursorUp   ; [UP]
 ld bc,MenuCursorDown ; [DOWN]
@@ -642,6 +688,7 @@ ld bc,Menu4Desc2 ; desc2
 ld bc,Menu4Desc3 ; desc3
 ld bc,Menu4Desc3 ; desc4
 ld bc,Menu4Desc4 ; desc5
+;....................................
 Menu4Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; cursor position at 0
@@ -650,36 +697,43 @@ ld hl,Menu4Text
 ld de,$c3f4
 call PutASCIIMultiline
 ret
+;....................................
 Menu4Desc1:
-db "Turn off RST",$0a,$0a
+db "turn off RST",$0a,$0a
 db "crash prevention",$00
+;....................................
 Menu4Desc2:
-db $0d,"Fixes the RST",$0a
+db $0d,"fixes the RST",$0a
 db "vectors with an",$0a
 db "absolute jump",$0a
 db "instruction.",$00
+;....................................
 Menu4Desc3:
-db $0d,"Fixes the RST",$0a
+db $0d,"fixes the RST",$0a
 db "vectors using",$0a
 db "return instru-",$0a
 db "ctions.",$00
+;....................................
 Menu4Desc4:
-db $0d,"Fixes the RST",$0a
+db $0d,"fixes the RST",$0a
 db "vectors through",$0a
 db "stack manipula-",$0a
 db "tions.",$00
+;....................................
 Menu4Text:
-db "Turn off",$0a
-db "Jump fix",$0a
-db "Return fix",$0a
-db "Dbl-return fix",$0a
-db "Stack fix",$00
+db "turn off",$0a
+db "jump fix",$0a
+db "return fix",$0a
+db "dbl-return fix",$0a
+db "stack fix",$00
+;....................................
 Menu4FixList:
 db $00,$00,$00,$00
 db $c1,$c3,$b9,$01
 db $c9,$de,$ad,$00
 db $e1,$e1,$e1,$e9
 db $e1,$e1,$e9,$00
+;....................................
 Menu4Perform:
 db $fa,$1b,$c2 ; load cursor position
 add a,a
@@ -690,6 +744,7 @@ ld hl,Menu4FixList
 add hl,bc
 ld de,$ffa6
 ld c,$04
+;....................................
 Menu4Perform_L1:
 db $2a ; LDI A,(HL)
 ld (de),a
@@ -698,16 +753,17 @@ dec c
 jr nz,Menu4Perform_L1
 call ConfirmSound
 jp BackToMain
-
+;....................................
 Menu5Properties:
-ld bc,Menu5CycUp   ; [UP]
-ld bc,Menu5CycDown ; [DOWN]
-ld bc,Menu5CurLeft ; [LEFT]
+ld bc,Menu5CycUp    ; [UP]
+ld bc,Menu5CycDown  ; [DOWN]
+ld bc,Menu5CurLeft  ; [LEFT]
 ld bc,Menu5CurRight ; [RIGHT]
-ld bc,BackToMain ; [B]
+ld bc,BackToMain    ; [B]
 ld bc,Menu5Perform   ; [A]
 ld bc,Menu5Constructor ; .ctor
-ld bc,Menu5Desc1 ; desc1
+ld bc,Menu5Desc1        ; desc1
+;....................................
 Menu5Constructor:
 xor a
 db $ea,$1b,$c2 ; ld ($c21b),a ; cursor position at 0
@@ -722,16 +778,19 @@ call MemSet
 ld hl,$c45e
 ld (hl),$e3
 jp Menu5Redraw
+;....................................
 Menu5Desc1:
-db $0d,"D-PAD: Modify",$0a
-db "A Button: Corrupt",$0a
-db "B Button: Cancel",$0a
+db $0d,"d-pad: modify",$0a
+db "a button: corrupt",$0a
+db "b button: canCel",$0a
 db "[select RAM only]",$00
+;....................................
 Menu5Text:
-db " -MemCorruptor-",$0a
-db "Hover over the",$0a
-db "dash and hold A",$0a
+db "-mem corruptor-",$0a
+db "hover over the",$0a
+db "dash and hold a",$0a
 db "to fuzz randomly",$00
+;....................................
 Menu5CycUp:
 ld hl,$c45a
 db $fa,$1b,$c2
@@ -747,12 +806,15 @@ cp $86
 ret nz
 ld (hl),$f6
 ret
+;....................................
 Menu5CycUp_L1:
 ld (hl),$80
 ret
+;....................................
 Menu5CycRestore:
 ld (hl),$e3
 ret
+;....................................
 Menu5CycDown:
 ld hl,$c45a
 db $fa,$1b,$c2
@@ -768,9 +830,11 @@ cp $7f
 ret nz
 ld (hl),$ff
 ret
+;....................................
 Menu5CycDown_L1:
 ld (hl),$85
 ret
+;....................................
 Menu5CurLeft:
 ld hl,$c21b
 ld a,(hl)
@@ -778,12 +842,14 @@ cp $00
 ret z
 dec (hl)
 jr Menu5Redraw
+;....................................
 Menu5CurRight:
 ld hl,$c21b
 ld a,(hl)
 cp $08
 ret z
 inc (hl)
+;....................................
 Menu5Redraw:
 ld hl,$c446
 ld a,$7f
@@ -796,19 +862,20 @@ add a,l
 ld l,a
 ld (hl),$ee
 ret
+;....................................
 Menu5RandomFuzz:
 pop hl
 pop de
-ld de,$0000 ;this will disable debounce checking, since
-push de ;every x and 0 equals 0
+ld de,$0000 ; disables debounce checks
+push de ; since every x and 0 equals 0
 pop hl
-call $3e6d ; GenRandom
+call $3e6d ; random
 ld l,a
-call $3e6d ; GenRandom
+call $3e6d ; random
 and $1f
 add a,$c0
 ld h,a
-call $3e6d ; GenRandom
+call $3e6d ; random
 ld (hl),a
 ld hl,$c44a
 ld a,(hl)
@@ -816,9 +883,11 @@ cp $7f
 jr z,Menu5RandomFuzz_L1
 ld (hl),$7f
 ret
+;....................................
 Menu5RandomFuzz_L1:
 ld (hl),$ee
 ret
+;....................................
 Menu5Perform:
 db $fa,$1b,$c2
 cp $04
@@ -843,8 +912,9 @@ pop de
 ld e,a
 pop hl
 inc de
+;....................................
 Menu5Perform_L1:
-call $3e6d ; GenRandom
+call $3e6d ; random
 db $22 ; LDI (HL),A
 ld a,h
 cp d
