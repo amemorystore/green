@@ -1,7 +1,6 @@
 ;  ......_ ......
 ; org [b]71b0 // 29104
 ; y el lowg reen
-; random = 'GenRandom'
 ;....................................
 ld hl,$005e
 call $3c36
